@@ -14,10 +14,12 @@
   "requireDotNotation": true,
   "requireBlocksOnNewline": 1,
   "maximumLineLength": {
-    "value": 100,
-    "tabSize": 4,
-    "allowUrlComments": true,
-    "allowRegex": true
+    "value": 120,
+    "tabSize": 2,
+    "allExcept": [
+      "urlComments",
+      "regex"
+    ]
   },
   "validateQuoteMarks": { "mark": "'", "escape": true },
 
