@@ -30,7 +30,6 @@ describe( 'Deck', function() {
     expect( deck.top( 3 ) ).to.deep.equal([ 'a', 'b', 'c' ]);
   });
 
-
   describe( 'method .cards()', function() {
 
     it( 'exists', function() {

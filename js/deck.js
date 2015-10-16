@@ -5,9 +5,7 @@
 
 var randomNumber = require( './lib/random-number' );
 
-function isArray( arr ) {
-  return Array.isArray( arr );
-}
+var isArray = require( './lib/is-array' );
 
 function randomIndex( arr ) {
   var length = isArray( arr ) ? arr.length : arr;
