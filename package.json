@@ -4,9 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "open http://localhost:4141; serve -p 4141",
+    "watch": "watchify js/game.js -o js/bundle.js",
+    "build": "browserify js/game.js -o js/bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "browserify": "^11.2.0",
+    "serve": "^1.4.0",
+    "watchify": "^3.4.0"
+  }
 }
