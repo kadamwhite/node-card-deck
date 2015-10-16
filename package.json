@@ -28,7 +28,11 @@
     "jshint-stylish": "^2.0.1",
     "load-grunt-tasks": "^3.3.0",
     "mocha": "^2.3.3",
+    "proxyquire": "^1.7.3",
     "serve": "^1.4.0",
     "watchify": "^3.4.0"
+  },
+  "dependencies": {
+    "lodash": "^3.10.1"
   }
 }
