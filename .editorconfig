@@ -1,0 +1,23 @@
+# top-most EditorConfig file: http://editorconfig.org/ for more info
+root = true
+
+# All files get certain space preferences
+[*]
+# Every file ends in a newline
+insert_final_newline = true
+# Always trim trailing whitespace (cleaner diffs)
+trim_trailing_whitespace = true
+# Consistent EOL characters
+end_of_line = lf
+# Set default charset
+charset = utf-8
+
+# Matches multiple file types with brace expansion notation:
+# Apply to scripts, styles, templates & yaml
+[*.{js,styl,tmpl,yml}]
+indent_style = space
+indent_size = 2
+
+# Apply to Nginx & other config files
+[*.{conf}]
+indent_style = tab

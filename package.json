@@ -5,15 +5,29 @@
   "main": "index.js",
   "scripts": {
     "start": "open http://localhost:4141; serve -p 4141",
-    "watch": "watchify js/game.js -o js/bundle.js",
     "build": "browserify js/game.js -o js/bundle.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:watch": "watchify js/game.js -o js/bundle.js",
+    "lint": "grunt jshint jscs",
+    "lint:watch": "grunt watch",
+    "test": "istanbul cover _mocha -- $(find js/ -path '*.spec.js') --reporter=nyan",
+    "test:watch": "mocha $(find js/ -path '*.spec.js') --watch --reporter=nyan"
   },
-  "author": "",
+  "author": "K.Adam White (http://www.kadamwhite.com/)",
   "license": "MIT",
   "private": true,
   "devDependencies": {
     "browserify": "^11.2.0",
+    "chai": "^3.3.0",
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-jshint": "^0.11.3",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-jscs": "^2.1.0",
+    "istanbul": "^0.3.22",
+    "jscs-stylish": "^0.3.1",
+    "jshint-stylish": "^2.0.1",
+    "load-grunt-tasks": "^3.3.0",
+    "mocha": "^2.3.3",
     "serve": "^1.4.0",
     "watchify": "^3.4.0"
   }
