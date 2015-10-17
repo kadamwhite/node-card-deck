@@ -57,17 +57,28 @@ Deck.prototype.remaining = function() {
 Deck.prototype.draw = function( count ) {
   count || ( count = 1 );
   var drawnCards = this._stack.splice( 0, count );
+  if ( ! drawnCards.length ) { return; }
   return count === 1 ? drawnCards[ 0 ] : drawnCards;
 };
 Deck.prototype.drawFromBottom = function( count ) {
   count || ( count = 1 );
   var drawnCards = this._stack.splice( -count, count ).reverse();
-  if ( count === 1 ) {
-    return drawnCards[ 0 ];
-  }
+  if ( ! drawnCards.length ) { return; }
+  return count === 1 ? drawnCards[ 0 ] : drawnCards;
 };
 Deck.prototype.drawWhere = function( count, predicate ) {
+  if ( typeof count === 'function' ) {
+    predicate = count;
+    count = 1;
+  }
   count || ( count = 1 );
+  var drawnCards = this._stack.filter( predicate ).slice( 0, count );
+  for ( var i = 0; i < drawnCards.length; i++ ) {
+    // Remove from the stack
+    this._stack.splice( this._stack.indexOf( drawnCards[ i ] ), 1 );
+  }
+  if ( ! drawnCards.length ) { return; }
+  return count === 1 ? drawnCards[ 0 ] : drawnCards;
 };
 Deck.prototype.drawRandom = function( count ) {
   count || ( count = 1 );
@@ -78,6 +89,10 @@ Deck.prototype.drawRandom = function( count ) {
   for ( var i = 0; i < count; i++ ) {
     drawnCards.push( this._stack.splice( randomIndex( this._stack ), 1 )[ 0 ] );
   }
+  drawnCards = drawnCards.filter(function( card ) {
+    return typeof card !== 'undefined';
+  });
+  if ( ! drawnCards.length ) { return; }
   return drawnCards;
 };
 Deck.prototype.discardToBottom = function( cards ) {
@@ -121,12 +136,14 @@ Deck.prototype.top = function( count ) {
   if ( ! this._stack.length ) { return; }
   count || ( count = 1 );
   var returnedCards = this._stack.slice( 0, count );
+  if ( ! returnedCards.length ) { return; }
   return count === 1 ? returnedCards[ 0 ] : returnedCards;
 };
 Deck.prototype.bottom = function( count ) {
   if ( ! this._stack.length ) { return; }
   count || ( count = 1 );
   var returnedCards =  this._stack.slice( -count ).reverse();
+  if ( ! returnedCards.length ) { return; }
   return count === 1 ? returnedCards[ 0 ] : returnedCards;
 };
 Deck.prototype.random = function( count ) {
@@ -146,6 +163,7 @@ Deck.prototype.random = function( count ) {
     }
     returnedCards.push( this._stack.slice( idx, idx + 1 )[ 0 ] );
   }
+  if ( ! returnedCards.length ) { return; }
   return returnedCards;
 };
 

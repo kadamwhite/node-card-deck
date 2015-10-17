@@ -157,6 +157,12 @@ describe( 'Deck', function() {
         expect( deck.remaining() ).to.equal( 0 );
       });
 
+      it( 'returns undefined if no cards remain', function() {
+        deck.cards([]);
+        expect( deck.draw() ).to.be.undefined;
+        expect( deck.draw( 2 ) ).to.be.undefined;
+      });
+
     });
 
     describe( '.drawFromBottom()', function() {
@@ -169,15 +175,37 @@ describe( 'Deck', function() {
         expect( deck.drawFromBottom ).to.be.a( 'function' );
       });
 
-      it( 'draws (returns) one card object from the bottom of the deck' );
+      it( 'draws (returns) one card object from the bottom of the deck', function() {
+        expect( deck.drawFromBottom() ).to.equal( 'e' );
+      });
 
-      it( 'removes the drawn card from the deck' );
+      it( 'removes the drawn card from the deck', function() {
+        deck.drawFromBottom();
+        expect( deck.remaining() ).to.equal( 4 );
+        expect( deck.bottom( 4 ) ).to.deep.equal([ 'd', 'c', 'b', 'a' ]);
+      });
 
-      it( 'draws (returns) an array of n cards from the bottom of the deck' );
+      it( 'draws (returns) an array of n cards from the bottom of the deck', function() {
+        expect( deck.drawFromBottom( 2 ) ).to.deep.equal([ 'e', 'd' ]);
+        expect( deck.drawFromBottom( 3 ) ).to.deep.equal([ 'c', 'b', 'a' ]);
+      });
 
-      it( 'removes the drawn n cards from the deck' );
+      it( 'removes the drawn n cards from the deck', function() {
+        deck.drawFromBottom( 4 );
+        expect( deck.remaining() ).to.equal( 1 );
+        expect( deck.top() ).to.equal( deck.bottom() );
+      });
 
-      it( 'cannot draw more than the remaining number of cards' );
+      it( 'cannot draw more than the remaining number of cards', function() {
+        expect( deck.drawFromBottom( 1066 ) ).to.deep.equal([ 'e', 'd', 'c', 'b', 'a' ]);
+        expect( deck.remaining() ).to.equal( 0 );
+      });
+
+      it( 'returns undefined if no cards remain', function() {
+        deck.cards([]);
+        expect( deck.drawFromBottom() ).to.be.undefined;
+        expect( deck.drawFromBottom( 2 ) ).to.be.undefined;
+      });
 
     });
 
@@ -191,15 +219,54 @@ describe( 'Deck', function() {
         expect( deck.drawWhere ).to.be.a( 'function' );
       });
 
-      it( 'draws (returns) the next card in the deck that passes a filter function' );
+      it( 'draws the next card in the deck that passes a filter function', function() {
+        expect( deck.drawWhere(function( card ) {
+          return card === 'd';
+        }) ).to.equal( 'd' );
+      });
 
-      it( 'removes the drawn card from the deck' );
+      it( 'removes the drawn card from the deck', function() {
+        deck.drawWhere(function( card ) {
+          return card === 'd';
+        });
+        expect( deck.remaining() ).to.equal( 4 );
+        expect( deck.top( 4 ) ).to.deep.equal([ 'a', 'b', 'c', 'e' ]);
+      });
 
-      it( 'draws (returns) an array of the next n cards passing a filter function' );
+      it( 'draws an array of the next n cards passing a filter function', function() {
+        expect( deck.drawWhere( 4, function( card, index ) {
+          return index % 2 === 1;
+        }) ).to.deep.equal([ 'b', 'd' ]);
+      });
 
-      it( 'removes the drawn n cards from the deck' );
+      it( 'removes the drawn n cards from the deck', function() {
+        deck.drawWhere( 2, function( card ) {
+          return /[aeiou]/.test( card );
+        });
+        expect( deck.remaining() ).to.equal( 3 );
+        expect( deck.top( 3 ) ).to.deep.equal([ 'b', 'c', 'd' ]);
+      });
 
-      it( 'cannot draw more than the remaining number of cards' );
+      it( 'cannot draw more than the remaining number of cards', function() {
+        expect( deck.drawWhere( 100, function() {
+          return true;
+        }) ).to.deep.equal([ 'a', 'b', 'c', 'd', 'e' ]);
+      });
+
+      it( 'returns undefined if no matching cards are found', function() {
+        expect( deck.drawWhere(function( card ) {
+          return card === 'f';
+        }) ).to.be.undefined;
+      });
+
+      it( 'returns undefined if no cards remain', function() {
+        deck.cards([]);
+        function alwaysTrue() {
+          return true;
+        }
+        expect( deck.drawWhere( alwaysTrue ) ).to.be.undefined;
+        expect( deck.drawWhere( 2, alwaysTrue ) ).to.be.undefined;
+      });
 
     });
 
@@ -222,6 +289,12 @@ describe( 'Deck', function() {
       it( 'removes the drawn n cards from the deck' );
 
       it( 'cannot draw more than the remaining number of cards' );
+
+      it( 'returns undefined if no cards remain', function() {
+        deck.cards([]);
+        expect( deck.drawRandom() ).to.be.undefined;
+        expect( deck.drawRandom( 2 ) ).to.be.undefined;
+      });
 
     });
 
