@@ -7,15 +7,14 @@ module.exports = function( grunt ) {
   var files = {
     grunt: [ 'Gruntfile.js' ],
     js: [
-      'js/**/*.js',
+      'deck.js',
+      'lib/**/*.js',
       // No tests
-      '!js/**/*.spec.js',
-      // No built files
-      '!js/bundle.js',
-      '!js/bundle.min.js'
+      '!**/*.spec.js'
     ],
     tests: [
-      'js/**/*.spec.js'
+      'deck.spec.js',
+      'lib/**/*.spec.js'
     ]
   };
 

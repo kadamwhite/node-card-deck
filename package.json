@@ -1,22 +1,17 @@
 {
-  "name": "scoundrel",
-  "version": "0.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "card-deck",
+  "version": "0.1.0",
+  "description": "A JavaScript implementation of a deck of cards with a simple, intuitive API",
+  "main": "deck.js",
   "scripts": {
-    "start": "open http://localhost:4141; serve -p 4141",
-    "build": "browserify js/game.js -o js/bundle.js",
-    "build:watch": "watchify js/game.js -o js/bundle.js",
     "lint": "grunt jshint jscs",
     "lint:watch": "grunt watch",
-    "test": "istanbul cover _mocha -- $(find js/ -path '*.spec.js') --reporter=nyan",
-    "test:watch": "mocha $(find js/ -path '*.spec.js') --watch --reporter=nyan"
+    "test": "istanbul cover _mocha -- deck.spec.js $(find lib/ -path '*.spec.js') --reporter=nyan",
+    "test:watch": "mocha deck.spec.js $(find lib/ -path '*.spec.js') --watch --reporter=nyan"
   },
   "author": "K.Adam White (http://www.kadamwhite.com/)",
   "license": "MIT",
-  "private": true,
   "devDependencies": {
-    "browserify": "^11.2.0",
     "chai": "^3.3.0",
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
@@ -29,8 +24,6 @@
     "load-grunt-tasks": "^3.3.0",
     "lodash.merge": "^3.3.2",
     "mocha": "^2.3.3",
-    "proxyquire": "^1.7.3",
-    "serve": "^1.4.0",
-    "watchify": "^3.4.0"
+    "proxyquire": "^1.7.3"
   }
 }
