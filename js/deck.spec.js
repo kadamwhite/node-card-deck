@@ -6,11 +6,15 @@ var proxyquire = require( 'proxyquire' );
 // Use a seeded random number generator to remove randomness from the tests
 var seededRandomNumber = require( './lib/seeded-random-number' );
 var Deck = proxyquire( './deck', {
-  './lib/random-number': seededRandomNumber.makeMock( 'deck.spec.js' )
+  './lib/random-number': seededRandomNumber.makeMock()
 });
 
 describe( 'Deck', function() {
   var deck;
+
+  beforeEach(function() {
+    seededRandomNumber.setSeed( 'deck.spec.js' );
+  });
 
   it( 'exists', function() {
     expect( Deck ).to.exist;
@@ -30,53 +34,53 @@ describe( 'Deck', function() {
     expect( deck.top( 3 ) ).to.deep.equal([ 'a', 'b', 'c' ]);
   });
 
-  describe( 'method .cards()', function() {
-
-    it( 'exists', function() {
-      expect( deck ).to.have.property( 'cards' );
-    });
-
-    it( 'is a function', function() {
-      expect( deck.cards ).to.be.a( 'function' );
-    });
-
-    it( 'populates the deck with an array of cards', function() {
-      deck.cards([ 'a', 'b', 'c', 'd' ]);
-      expect( deck.remaining() ).to.equal( 4 );
-      expect( deck.top( 4 ) ).to.deep.equal([ 'a', 'b', 'c', 'd' ]);
-    });
-
-    it( 'replaces the previous cards in the deck', function() {
-      deck.cards([ 'a', 'b', 'c', 'd' ]);
-      deck.cards([ 'e', 'f', 'g' ]);
-      expect( deck.remaining() ).to.equal( 3 );
-      expect( deck.top( 3 ) ).to.deep.equal([ 'e', 'f', 'g' ]);
-    });
-
-    it( 'can empty the deck if an empty array is provided', function() {
-      deck.cards([ 'a', 'b', 'c', 'd' ]);
-      deck.cards([]);
-      expect( deck.remaining() ).to.equal( 0 );
-    });
-
-    it( 'has no effect if a non-array argument is provided', function() {
-      deck.cards([ 'a', 'b', 'c', 'd' ]);
-      deck.cards( 'lali puna' );
-      expect( deck.remaining() ).to.equal( 4 );
-      expect( deck.top( 4 ) ).to.deep.equal([ 'a', 'b', 'c', 'd' ]);
-    });
-
-    it( 'is chainable', function() {
-      expect( deck.cards() ).to.equal( deck );
-    });
-
-  });
-
-  describe( 'method', function() {
+  describe( 'state methods', function() {
 
     beforeEach(function() {
       deck = new Deck();
       deck.cards([ 'a', 'b', 'c', 'd', 'e' ]);
+    });
+
+    describe( '.cards()', function() {
+
+      it( 'exists', function() {
+        expect( deck ).to.have.property( 'cards' );
+      });
+
+      it( 'is a function', function() {
+        expect( deck.cards ).to.be.a( 'function' );
+      });
+
+      it( 'populates the deck with an array of cards', function() {
+        deck.cards([ 'a', 'b', 'c', 'd' ]);
+        expect( deck.remaining() ).to.equal( 4 );
+        expect( deck.top( 4 ) ).to.deep.equal([ 'a', 'b', 'c', 'd' ]);
+      });
+
+      it( 'replaces the previous cards in the deck', function() {
+        deck.cards([ 'a', 'b', 'c', 'd' ]);
+        deck.cards([ 'e', 'f', 'g' ]);
+        expect( deck.remaining() ).to.equal( 3 );
+        expect( deck.top( 3 ) ).to.deep.equal([ 'e', 'f', 'g' ]);
+      });
+
+      it( 'can empty the deck if an empty array is provided', function() {
+        deck.cards([ 'a', 'b', 'c', 'd' ]);
+        deck.cards([]);
+        expect( deck.remaining() ).to.equal( 0 );
+      });
+
+      it( 'has no effect if a non-array argument is provided', function() {
+        deck.cards([ 'a', 'b', 'c', 'd' ]);
+        deck.cards( 'lali puna' );
+        expect( deck.remaining() ).to.equal( 4 );
+        expect( deck.top( 4 ) ).to.deep.equal([ 'a', 'b', 'c', 'd' ]);
+      });
+
+      it( 'is chainable', function() {
+        expect( deck.cards() ).to.equal( deck );
+      });
+
     });
 
     describe( '.shuffle()', function() {
@@ -119,6 +123,15 @@ describe( 'Deck', function() {
         expect( deck.remaining() ).to.equal( 2 );
       });
 
+    });
+
+  });
+
+  describe( 'card draw methods', function() {
+
+    beforeEach(function() {
+      deck = new Deck();
+      deck.cards([ 'a', 'b', 'c', 'd', 'e' ]);
     });
 
     describe( '.draw()', function() {
@@ -234,23 +247,27 @@ describe( 'Deck', function() {
       });
 
       it( 'draws an array of the next n cards passing a filter function', function() {
-        expect( deck.drawWhere( 4, function( card, index ) {
+        expect( deck.drawWhere(function( card, index ) {
           return index % 2 === 1;
-        }) ).to.deep.equal([ 'b', 'd' ]);
+        }, 4 ) ).to.deep.equal([ 'b', 'd' ]);
       });
 
       it( 'removes the drawn n cards from the deck', function() {
-        deck.drawWhere( 2, function( card ) {
+        deck.drawWhere(function( card ) {
           return /[aeiou]/.test( card );
-        });
+        }, 2 );
         expect( deck.remaining() ).to.equal( 3 );
         expect( deck.top( 3 ) ).to.deep.equal([ 'b', 'c', 'd' ]);
       });
 
       it( 'cannot draw more than the remaining number of cards', function() {
-        expect( deck.drawWhere( 100, function() {
+        expect( deck.drawWhere(function() {
           return true;
-        }) ).to.deep.equal([ 'a', 'b', 'c', 'd', 'e' ]);
+        }, 100 ) ).to.deep.equal([ 'a', 'b', 'c', 'd', 'e' ]);
+      });
+
+      it( 'returns undefined if no predicate function was provided', function() {
+        expect( deck.drawWhere( 2 ) ).to.be.undefined;
       });
 
       it( 'returns undefined if no matching cards are found', function() {
@@ -265,7 +282,7 @@ describe( 'Deck', function() {
           return true;
         }
         expect( deck.drawWhere( alwaysTrue ) ).to.be.undefined;
-        expect( deck.drawWhere( 2, alwaysTrue ) ).to.be.undefined;
+        expect( deck.drawWhere( alwaysTrue, 2 ) ).to.be.undefined;
       });
 
     });
@@ -280,22 +297,48 @@ describe( 'Deck', function() {
         expect( deck.drawRandom ).to.be.a( 'function' );
       });
 
-      it( 'draws (returns) a random card in the deck' );
+      it( 'draws a random card in the deck', function() {
+        expect( deck.drawRandom() ).to.equal( 'b' );
+        expect( deck.drawRandom() ).to.equal( 'c' );
+        expect( deck.drawRandom() ).to.equal( 'e' );
+      });
 
-      it( 'removes the drawn card from the deck' );
+      it( 'removes the drawn card from the deck', function() {
+        expect( deck.drawRandom() ).to.equal( 'b' );
+        expect( deck.remaining() ).to.equal( 4 );
+        expect( deck.top( 4 ) ).to.deep.equal([ 'a', 'c', 'd', 'e' ]);
+      });
 
-      it( 'draws (returns) an array of n cards chosen randomly from the deck' );
+      it( 'draws an array of n cards chosen randomly from the deck', function() {
+        expect( deck.drawRandom( 2 ) ).to.deep.equal([ 'b', 'c' ]);
+        expect( deck.drawRandom( 3 ) ).to.deep.equal([ 'e', 'd', 'a' ]);
+      });
 
-      it( 'removes the drawn n cards from the deck' );
+      it( 'removes the drawn n cards from the deck', function() {
+        expect( deck.drawRandom( 3 ) ).to.deep.equal([ 'b', 'c', 'e' ]);
+        expect( deck.remaining() ).to.equal( 2 );
+        expect( deck.top( 2 ) ).to.deep.equal([ 'a', 'd' ]);
+      });
 
-      it( 'cannot draw more than the remaining number of cards' );
+      it( 'cannot draw more than the remaining number of cards', function() {
+        expect( deck.drawRandom( 100 ) ).to.deep.equal([ 'b', 'c', 'e', 'd', 'a' ]);
+      });
 
-      it( 'returns undefined if no cards remain', function() {
+      it( 'returns undefined if the deck is empty', function() {
         deck.cards([]);
         expect( deck.drawRandom() ).to.be.undefined;
         expect( deck.drawRandom( 2 ) ).to.be.undefined;
       });
 
+    });
+
+  });
+
+  describe( 'insert card methods', function() {
+
+    beforeEach(function() {
+      deck = new Deck();
+      deck.cards([ 'a', 'b', 'c', 'd', 'e' ]);
     });
 
     describe( '.discardToBottom()', function() {
@@ -308,9 +351,21 @@ describe( 'Deck', function() {
         expect( deck.discardToBottom ).to.be.a( 'function' );
       });
 
-      it( 'returns a card object to the bottom of the deck' );
+      it( 'returns a card object to the bottom of the deck', function() {
+        deck.discardToBottom( 'f' );
+        expect( deck.remaining() ).to.equal( 6 );
+        expect( deck.bottom() ).to.equal( 'f' );
+      });
 
-      it( 'returns an array of cards to the bottom of the deck in order' );
+      it( 'returns an array of cards to the bottom of the deck in order', function() {
+        deck.discardToBottom([ 'f', 'g', 'h', 'i' ]);
+        expect( deck.remaining() ).to.equal( 9 );
+        expect( deck.bottom( 4 ) ).to.deep.equal([ 'i', 'h', 'g', 'f' ]);
+      });
+
+      it( 'is chainable', function() {
+        expect( deck.discardToBottom() ).to.equal( deck );
+      });
 
     });
 
@@ -326,11 +381,19 @@ describe( 'Deck', function() {
 
       it( 'returns a card object to the bottom of the deck', function() {
         deck.shuffleToBottom( 'bottomcard' );
-        var bottomCard = deck.bottom();
-        expect( bottomCard ).to.equal( 'bottomcard' );
+        expect( deck.remaining() ).to.equal( 6 );
+        expect( deck.bottom() ).to.equal( 'bottomcard' );
       });
 
-      it( 'returns an array of cards to the bottom of the deck in random order' );
+      it( 'returns an array of cards to the bottom of the deck in random order', function() {
+        deck.shuffleToBottom([ 'f', 'g', 'h', 'i' ]);
+        expect( deck.remaining() ).to.equal( 9 );
+        expect( deck.top( 9 ) ).to.deep.equal([ 'a', 'b', 'c', 'd', 'e', 'h', 'g', 'i', 'f' ]);
+      });
+
+      it( 'is chainable', function() {
+        expect( deck.shuffleToBottom() ).to.equal( deck );
+      });
 
     });
 
@@ -345,12 +408,20 @@ describe( 'Deck', function() {
       });
 
       it( 'returns a card object to the top of the deck', function() {
-        deck.discardToTop( 'topcard' );
-        var topCard = deck.top();
-        expect( topCard ).to.equal( 'topcard' );
+        deck.discardToTop( 'f' );
+        expect( deck.remaining() ).to.equal( 6 );
+        expect( deck.top( 6 ) ).to.deep.equal([ 'f', 'a', 'b', 'c', 'd', 'e' ]);
       });
 
-      it( 'returns an array of cards to the top of the deck in order' );
+      it( 'returns an array of cards to the top of the deck in order', function() {
+        deck.discardToTop([ 'f', 'g', 'h' ]);
+        expect( deck.remaining() ).to.equal( 8 );
+        expect( deck.top( 8 ) ).to.deep.equal([ 'f', 'g', 'h', 'a', 'b', 'c', 'd', 'e' ]);
+      });
+
+      it( 'is chainable', function() {
+        expect( deck.discardToTop() ).to.equal( deck );
+      });
 
     });
 
@@ -369,7 +440,15 @@ describe( 'Deck', function() {
         expect( deck.top() ).to.equal( 'topcard' );
       });
 
-      it( 'returns an array of cards to the top of the deck in random order' );
+      it( 'returns an array of cards to the top of the deck in random order', function() {
+        deck.shuffleToTop([ 'f', 'g', 'h' ]);
+        expect( deck.remaining() ).to.equal( 8 );
+        expect( deck.top( 8 ) ).to.deep.equal([ 'g', 'h', 'f', 'a', 'b', 'c', 'd', 'e' ]);
+      });
+
+      it( 'is chainable', function() {
+        expect( deck.shuffleToTop() ).to.equal( deck );
+      });
 
     });
 
@@ -383,10 +462,31 @@ describe( 'Deck', function() {
         expect( deck.discardRandom ).to.be.a( 'function' );
       });
 
-      it( 'returns a card object to a random location within the deck' );
+      it( 'returns a card object to a random location within the deck', function() {
+        deck.discardRandom( 'f' );
+        expect( deck.remaining() ).to.equal( 6 );
+        expect( deck.top( 6 ) ).to.deep.equal([ 'a', 'f', 'b', 'c', 'd', 'e' ]);
+      });
 
-      it( 'returns an array of cards to random locations within the deck' );
+      it( 'returns an array of cards to random locations within the deck', function() {
+        deck.discardRandom([ 'f', 'g', 'h' ]);
+        expect( deck.remaining() ).to.equal( 8 );
+        expect( deck.top( 8 ) ).to.deep.equal([ 'a', 'g', 'f', 'b', 'c', 'h', 'd', 'e' ]);
+      });
 
+      it( 'is chainable', function() {
+        expect( deck.discardRandom() ).to.equal( deck );
+      });
+
+    });
+
+  });
+
+  describe( 'peek card methods', function() {
+
+    beforeEach(function() {
+      deck = new Deck();
+      deck.cards([ 'a', 'b', 'c', 'd', 'e' ]);
     });
 
     describe( '.top', function() {
@@ -454,6 +554,10 @@ describe( 'Deck', function() {
         expect( deck.remaining() ).to.equal( 5 );
       });
 
+      it( 'returns cards in the reverse order from .top', function() {
+        expect( deck.bottom( 5 ) ).to.deep.equal( deck.top( 5 ).reverse() );
+      });
+
       it( 'returns undefined if the deck is empty', function() {
         deck.cards([]);
         expect( deck.bottom() ).to.be.undefined;
@@ -471,13 +575,26 @@ describe( 'Deck', function() {
         expect( deck.random ).to.be.a( 'function' );
       });
 
-      it( 'returns a random card in the deck' );
+      it( 'returns a random card in the deck', function() {
+        expect( deck.random() ).to.equal( 'b' );
+        expect( deck.random() ).to.equal( 'b' );
+        expect( deck.random() ).to.equal( 'e' );
+      });
 
-      it( 'does not remove the returned card from the deck' );
+      it( 'does not remove the returned card from the deck', function() {
+        deck.random();
+        expect( deck.remaining() ).to.equal( 5 );
+      });
 
-      it( 'returns n random cards in the deck' );
+      it( 'returns n random cards in the deck', function() {
+        expect( deck.random( 2 ) ).to.deep.equal([ 'b', 'b' ]);
+        expect( deck.random( 2 ) ).to.deep.equal([ 'e', 'd' ]);
+      });
 
-      it( 'does not remove the returned n cards from the deck' );
+      it( 'does not remove the returned n cards from the deck', function() {
+        deck.random( 3 );
+        expect( deck.remaining() ).to.equal( 5 );
+      });
 
       it( 'returns undefined if the deck is empty', function() {
         deck.cards([]);

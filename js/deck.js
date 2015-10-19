@@ -7,15 +7,13 @@ var randomNumber = require( './lib/random-number' );
 
 var isArray = require( './lib/is-array' );
 
+// Get a random integer index within the provided array
 function randomIndex( arr ) {
   var length = isArray( arr ) ? arr.length : arr;
   return Math.floor( randomNumber() * length );
 }
 
-/**
- * Shuffle an array in place
- * @param {Array} arr A reference to the array to shuffle
- */
+// Shuffle an array in place, returning that array
 function shuffle( arr ) {
   // Fisher–Yates implementation adapted from http://bost.ocks.org/mike/shuffle/
   var remaining = arr.length;
@@ -41,35 +39,80 @@ function Deck( arr ) {
   this._stack = isArray( arr ) ? arr : [];
 }
 
+/**
+ * Populate the deck with an array of cards, wiping out any cards that had
+ * previously been added to the deck
+ *
+ * @chainable
+ * @param  {Array} cardArray An array of cards to use for the deck
+ * @return {Deck} The deck instance (for chaining)
+ */
 Deck.prototype.cards = function( cardArray ) {
   if ( ! isArray( cardArray ) ) { return this; }
   // Replace the deck with the new cards
   this._stack = cardArray;
   return this;
 };
+
+/**
+ * Randomize the order of cards within the deck
+ *
+ * @chainable
+ * @return {Deck} The deck instance (for chaining)
+ */
 Deck.prototype.shuffle = function() {
   shuffle( this._stack );
   return this;
 };
+
+/**
+ * Get the number of cards currently contained within the deck
+ *
+ * @return {Number} The number of cards left in the deck
+ */
 Deck.prototype.remaining = function() {
   return this._stack.length;
 };
+
+/**
+ * Draw a card or cards, removing the drawn cards from the deck
+ *
+ * @param {Number} [count] The number of cards to draw
+ * @return {Object|Array} A single card or an array of cards
+ */
 Deck.prototype.draw = function( count ) {
   count || ( count = 1 );
   var drawnCards = this._stack.splice( 0, count );
   if ( ! drawnCards.length ) { return; }
   return count === 1 ? drawnCards[ 0 ] : drawnCards;
 };
+
+/**
+ * Draw a card or cards from the bottom of the deck, removing the drawn cards
+ * from the deck
+ *
+ * @param  {Number} [count] The number of cards to draw
+ * @return {Object|Array} A single card or an array of cards
+ */
 Deck.prototype.drawFromBottom = function( count ) {
   count || ( count = 1 );
   var drawnCards = this._stack.splice( -count, count ).reverse();
   if ( ! drawnCards.length ) { return; }
   return count === 1 ? drawnCards[ 0 ] : drawnCards;
 };
-Deck.prototype.drawWhere = function( count, predicate ) {
-  if ( typeof count === 'function' ) {
-    predicate = count;
-    count = 1;
+
+/**
+ * Draw a card or cards matching a condition defined in a provided predicate
+ * function, removing the drawn cards from the deck
+ *
+ * @param {Function} predicate A function to use to evaluate whether a given
+ *                             card in the deck should be drawn
+ * @param {Number} [count] The number of cards to draw
+ * @return {Object|Array} A single card or an array of cards
+ */
+Deck.prototype.drawWhere = function( predicate, count ) {
+  if ( typeof predicate !== 'function' ) {
+    return;
   }
   count || ( count = 1 );
   var drawnCards = this._stack.filter( predicate ).slice( 0, count );
@@ -80,6 +123,14 @@ Deck.prototype.drawWhere = function( count, predicate ) {
   if ( ! drawnCards.length ) { return; }
   return count === 1 ? drawnCards[ 0 ] : drawnCards;
 };
+
+/**
+ * Draw a card or cards from random positions in the deck, removing the drawn
+ * cards from the deck
+ *
+ * @param {Number} [count] The number of cards to draw
+ * @return {Object|Array} A single card or an array of cards
+ */
 Deck.prototype.drawRandom = function( count ) {
   count || ( count = 1 );
   if ( count === 1 ) {
@@ -95,13 +146,30 @@ Deck.prototype.drawRandom = function( count ) {
   if ( ! drawnCards.length ) { return; }
   return drawnCards;
 };
+
+/**
+ * Insert a card or cards at the bottom of the deck in order
+ *
+ * @chainable
+ * @param {Object|Array} cards The card object or array of card objects to insert
+ * @return {Deck} The deck instance (for chaining)
+ */
 Deck.prototype.discardToBottom = function( cards ) {
   if ( ! isArray( cards ) ) {
     // Handle individual card objects
     return this.discardToBottom([ cards ]);
   }
   this._stack.push.apply( this._stack, cards );
+  return this;
 };
+
+/**
+ * Insert a card or cards at the bottom of the deck in random order
+ *
+ * @chainable
+ * @param {Object|Array} cards The card object or array of card objects to insert
+ * @return {Deck} The deck instance (for chaining)
+ */
 Deck.prototype.shuffleToBottom = function( cards ) {
   if ( ! isArray( cards ) ) {
     // Handle individual card objects
@@ -110,6 +178,14 @@ Deck.prototype.shuffleToBottom = function( cards ) {
   shuffle( cards );
   return this.discardToBottom( cards );
 };
+
+/**
+ * Insert a card or cards at the top of the deck in order
+ *
+ * @chainable
+ * @param {Object|Array} cards The card object or array of card objects to insert
+ * @return {Deck} The deck instance (for chaining)
+ */
 Deck.prototype.discardToTop = function( cards ) {
   if ( ! isArray( cards ) ) {
     // Handle individual card objects
@@ -118,6 +194,14 @@ Deck.prototype.discardToTop = function( cards ) {
   this._stack.unshift.apply( this._stack, cards );
   return this;
 };
+
+/**
+ * Insert a card or cards at the top of the deck in random order
+ *
+ * @chainable
+ * @param {Object|Array} cards The card object or array of card objects to insert
+ * @return {Deck} The deck instance (for chaining)
+ */
 Deck.prototype.shuffleToTop = function( cards ) {
   if ( ! isArray( cards ) ) {
     // Handle individual card objects
@@ -126,12 +210,33 @@ Deck.prototype.shuffleToTop = function( cards ) {
   shuffle( cards );
   return this.discardToTop( cards );
 };
+
+/**
+ * Insert a card or cards into the deck at random positions
+ *
+ * @chainable
+ * @param {Object|Array} cards The card object or array of card objects to insert
+ * @return {Deck} The deck instance (for chaining)
+ */
 Deck.prototype.discardRandom = function( cards ) {
   if ( ! isArray( cards ) ) {
     // Handle individual card objects
     return this.discardRandom([ cards ]);
   }
+  var stack = this._stack;
+  cards.forEach(function( card ) {
+    stack.splice( randomIndex( stack ), 0, card );
+  });
+  return this;
 };
+
+/**
+ * Look at a card or cards on the bottom of the deck, without removing them
+ * from the deck
+ *
+ * @param {Number} count The number of cards to retrieve
+ * @return {Object|Array} A single card or an array of cards
+ */
 Deck.prototype.top = function( count ) {
   if ( ! this._stack.length ) { return; }
   count || ( count = 1 );
@@ -139,6 +244,14 @@ Deck.prototype.top = function( count ) {
   if ( ! returnedCards.length ) { return; }
   return count === 1 ? returnedCards[ 0 ] : returnedCards;
 };
+
+/**
+ * Look at a card or cards on the top of the deck, without removing them from
+ * the deck
+ *
+ * @param {Number} count The number of cards to retrieve
+ * @return {Object|Array} A single card or an array of cards
+ */
 Deck.prototype.bottom = function( count ) {
   if ( ! this._stack.length ) { return; }
   count || ( count = 1 );
@@ -146,15 +259,23 @@ Deck.prototype.bottom = function( count ) {
   if ( ! returnedCards.length ) { return; }
   return count === 1 ? returnedCards[ 0 ] : returnedCards;
 };
+
+/**
+ * Look at a random card or cards, without removing them from the deck
+ *
+ * @param {Number} count The number of cards to retrieve
+ * @return {Object|Array} A single card or an array of cards
+ */
 Deck.prototype.random = function( count ) {
   if ( ! this._stack.length ) { return; }
   count || ( count = 1 );
+  var idx;
   if ( count === 1 ) {
-    return this._stack.slice( randomIndex( this._stack, 1 ) )[ 0 ];
+    idx = randomIndex( this._stack );
+    return this._stack.slice( idx, idx + 1 )[ 0 ];
   }
   var returnedCards = [];
   var usedIndices = [];
-  var idx;
   for ( var i = 0; i < count; i++ ) {
     idx = randomIndex( this._stack );
     // Ensure index has not been used
