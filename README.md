@@ -1,5 +1,7 @@
 # Deck
 
+[![Build Status](https://travis-ci.org/kadamwhite/node-card-deck.svg?branch=master)](https://travis-ci.org/kadamwhite/node-card-deck)
+
 `Deck` is a basic JavaScript implementation of a deck of cards. An interface is provided to shuffle, pick, draw, re-insert and observe cards within the deck in a variety of ways. `Deck` makes no assumptions about the type of objects that will be contained within a deck: it can be used equally well with a string representation of traditional playing cards (say, `'h4'` for the 4 of hearts) as it could with a complex object instantiating a custom constructor (*e.g.* a `MagicCard` object).
 
 [There are many implementations of this behavior on npm](https://www.npmjs.com/search?q=deck); I created another as an experiment for myself, not out of any fault in the existing options.
