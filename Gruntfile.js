@@ -1,4 +1,4 @@
-var _ = require( 'lodash' );
+var merge = require( 'lodash.merge' );
 
 module.exports = function( grunt ) {
   'use strict';
@@ -58,7 +58,7 @@ module.exports = function( grunt ) {
         src: files.js
       },
       tests: {
-        options: _.merge({
+        options: merge({
           mocha: true
         }, jshintrc ),
         src: files.tests

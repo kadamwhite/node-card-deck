@@ -13,7 +13,8 @@ describe( 'Deck', function() {
   var deck;
 
   beforeEach(function() {
-    seededRandomNumber.setSeed( 'deck.spec.js' );
+    seededRandomNumber.setSeed( 0 );
+    expect( seededRandomNumber.getSeed() ).to.equal( 0 );
   });
 
   it( 'exists', function() {
@@ -281,6 +282,7 @@ describe( 'Deck', function() {
         function alwaysTrue() {
           return true;
         }
+        expect( alwaysTrue() ).to.equal.true;
         expect( deck.drawWhere( alwaysTrue ) ).to.be.undefined;
         expect( deck.drawWhere( alwaysTrue, 2 ) ).to.be.undefined;
       });
@@ -518,6 +520,10 @@ describe( 'Deck', function() {
         expect( deck.remaining() ).to.equal( 5 );
       });
 
+      it( 'does not return more than the remaining number of cards', function() {
+        expect( deck.top( 10 ) ).to.deep.equal([ 'a', 'b', 'c', 'd', 'e' ]);
+      });
+
       it( 'returns undefined if the deck is empty', function() {
         deck.cards([]);
         expect( deck.top() ).to.be.undefined;
@@ -558,6 +564,10 @@ describe( 'Deck', function() {
         expect( deck.bottom( 5 ) ).to.deep.equal( deck.top( 5 ).reverse() );
       });
 
+      it( 'does not return more than the remaining number of cards', function() {
+        expect( deck.bottom( 10 ) ).to.deep.equal([ 'e', 'd', 'c', 'b', 'a' ]);
+      });
+
       it( 'returns undefined if the deck is empty', function() {
         deck.cards([]);
         expect( deck.bottom() ).to.be.undefined;
@@ -587,13 +597,17 @@ describe( 'Deck', function() {
       });
 
       it( 'returns n random cards in the deck', function() {
-        expect( deck.random( 2 ) ).to.deep.equal([ 'b', 'b' ]);
-        expect( deck.random( 2 ) ).to.deep.equal([ 'e', 'd' ]);
+        expect( deck.random( 2 ) ).to.deep.equal([ 'a', 'd' ]);
+        expect( deck.random( 2 ) ).to.deep.equal([ 'a', 'c' ]);
       });
 
       it( 'does not remove the returned n cards from the deck', function() {
         deck.random( 3 );
         expect( deck.remaining() ).to.equal( 5 );
+      });
+
+      it( 'does not return more than the remaining number of cards', function() {
+        expect( deck.random( 10 ) ).to.deep.equal([ 'a', 'd', 'c', 'e', 'b' ]);
       });
 
       it( 'returns undefined if the deck is empty', function() {

@@ -9,8 +9,12 @@ var isArray = require( './lib/is-array' );
 
 // Get a random integer index within the provided array
 function randomIndex( arr ) {
-  var length = isArray( arr ) ? arr.length : arr;
-  return Math.floor( randomNumber() * length );
+  return Math.floor( randomNumber() * arr.length );
+}
+
+// Predicate function to filter out undefined values
+function isNotUndefined( val ) {
+  return typeof val !== 'undefined';
 }
 
 // Shuffle an array in place, returning that array
@@ -36,7 +40,9 @@ function shuffle( arr ) {
  * @class Deck
  */
 function Deck( arr ) {
-  this._stack = isArray( arr ) ? arr : [];
+  if ( isArray( arr ) ) {
+    this.cards( arr );
+  }
 }
 
 /**
@@ -132,6 +138,7 @@ Deck.prototype.drawWhere = function( predicate, count ) {
  * @return {Object|Array} A single card or an array of cards
  */
 Deck.prototype.drawRandom = function( count ) {
+  if ( ! this._stack.length ) { return; }
   count || ( count = 1 );
   if ( count === 1 ) {
     return this._stack.splice( randomIndex( this._stack ), 1 )[ 0 ];
@@ -140,10 +147,7 @@ Deck.prototype.drawRandom = function( count ) {
   for ( var i = 0; i < count; i++ ) {
     drawnCards.push( this._stack.splice( randomIndex( this._stack ), 1 )[ 0 ] );
   }
-  drawnCards = drawnCards.filter(function( card ) {
-    return typeof card !== 'undefined';
-  });
-  if ( ! drawnCards.length ) { return; }
+  drawnCards = drawnCards.filter( isNotUndefined );
   return drawnCards;
 };
 
@@ -241,7 +245,6 @@ Deck.prototype.top = function( count ) {
   if ( ! this._stack.length ) { return; }
   count || ( count = 1 );
   var returnedCards = this._stack.slice( 0, count );
-  if ( ! returnedCards.length ) { return; }
   return count === 1 ? returnedCards[ 0 ] : returnedCards;
 };
 
@@ -256,7 +259,6 @@ Deck.prototype.bottom = function( count ) {
   if ( ! this._stack.length ) { return; }
   count || ( count = 1 );
   var returnedCards =  this._stack.slice( -count ).reverse();
-  if ( ! returnedCards.length ) { return; }
   return count === 1 ? returnedCards[ 0 ] : returnedCards;
 };
 
@@ -274,18 +276,10 @@ Deck.prototype.random = function( count ) {
     idx = randomIndex( this._stack );
     return this._stack.slice( idx, idx + 1 )[ 0 ];
   }
-  var returnedCards = [];
-  var usedIndices = [];
-  for ( var i = 0; i < count; i++ ) {
-    idx = randomIndex( this._stack );
-    // Ensure index has not been used
-    while ( usedIndices.indexOf( idx ) > -1 ) {
-      idx = randomIndex( this._stack );
-    }
-    returnedCards.push( this._stack.slice( idx, idx + 1 )[ 0 ] );
-  }
-  if ( ! returnedCards.length ) { return; }
-  return returnedCards;
+  var cards = [].concat( this._stack );
+  shuffle( cards );
+  cards.length = count;
+  return cards.filter( isNotUndefined );
 };
 
 module.exports = Deck;
