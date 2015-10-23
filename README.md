@@ -82,10 +82,10 @@ var randomCards = deck.drawRandom(2);
 Return cards to the deck using the following discard methods:
 ```js
 // Place a card on the top of the deck
-myDeck.discardToTop({ suit: 'spades', rank: 'Jack' });
+myDeck.addToTop({ suit: 'spades', rank: 'Jack' });
 
 // Return two cards to the bottom of the deck
-myDeck.discardToBottom([card1, card2]);
+myDeck.addToBottom([card1, card2]);
 
 // Return three cards to the bottom of the deck in random order
 myDeck.shuffleToBottom([card1, card2, card3]);
@@ -94,7 +94,15 @@ myDeck.shuffleToBottom([card1, card2, card3]);
 myDeck.shuffleToTop([card1, card2]);
 
 // Insert an array of cards at random positions throughout the deck
-myDeck.discardRandom([card1, card2, card3]);
+myDeck.addRandom([card1, card2, card3]);
+```
+
+The verbiage here is intentionally general. You can create your own aliases for these functions by augmenting the `Deck` prototype:
+
+```js
+myDeck.prototype.replace = function( cards ) {
+  return this.placeOnTop( cards );
+}
 ```
 
 ## Development & Contributing

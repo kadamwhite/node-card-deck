@@ -158,10 +158,10 @@ Deck.prototype.drawRandom = function( count ) {
  * @param {Object|Array} cards The card object or array of card objects to insert
  * @return {Deck} The deck instance (for chaining)
  */
-Deck.prototype.discardToBottom = function( cards ) {
+Deck.prototype.addToBottom = function( cards ) {
   if ( ! isArray( cards ) ) {
     // Handle individual card objects
-    return this.discardToBottom([ cards ]);
+    return this.addToBottom([ cards ]);
   }
   this._stack.push.apply( this._stack, cards );
   return this;
@@ -180,7 +180,7 @@ Deck.prototype.shuffleToBottom = function( cards ) {
     return this.shuffleToBottom([ cards ]);
   }
   shuffle( cards );
-  return this.discardToBottom( cards );
+  return this.addToBottom( cards );
 };
 
 /**
@@ -190,10 +190,10 @@ Deck.prototype.shuffleToBottom = function( cards ) {
  * @param {Object|Array} cards The card object or array of card objects to insert
  * @return {Deck} The deck instance (for chaining)
  */
-Deck.prototype.discardToTop = function( cards ) {
+Deck.prototype.addToTop = function( cards ) {
   if ( ! isArray( cards ) ) {
     // Handle individual card objects
-    return this.discardToTop([ cards ]);
+    return this.addToTop([ cards ]);
   }
   this._stack.unshift.apply( this._stack, cards );
   return this;
@@ -212,7 +212,7 @@ Deck.prototype.shuffleToTop = function( cards ) {
     return this.shuffleToTop([ cards ]);
   }
   shuffle( cards );
-  return this.discardToTop( cards );
+  return this.addToTop( cards );
 };
 
 /**
@@ -222,10 +222,10 @@ Deck.prototype.shuffleToTop = function( cards ) {
  * @param {Object|Array} cards The card object or array of card objects to insert
  * @return {Deck} The deck instance (for chaining)
  */
-Deck.prototype.discardRandom = function( cards ) {
+Deck.prototype.addRandom = function( cards ) {
   if ( ! isArray( cards ) ) {
     // Handle individual card objects
-    return this.discardRandom([ cards ]);
+    return this.addRandom([ cards ]);
   }
   var stack = this._stack;
   cards.forEach(function( card ) {

@@ -343,30 +343,30 @@ describe( 'Deck', function() {
       deck.cards([ 'a', 'b', 'c', 'd', 'e' ]);
     });
 
-    describe( '.discardToBottom()', function() {
+    describe( '.addToBottom()', function() {
 
       it( 'exists', function() {
-        expect( deck ).to.have.property( 'discardToBottom' );
+        expect( deck ).to.have.property( 'addToBottom' );
       });
 
       it( 'is a function', function() {
-        expect( deck.discardToBottom ).to.be.a( 'function' );
+        expect( deck.addToBottom ).to.be.a( 'function' );
       });
 
       it( 'returns a card object to the bottom of the deck', function() {
-        deck.discardToBottom( 'f' );
+        deck.addToBottom( 'f' );
         expect( deck.remaining() ).to.equal( 6 );
         expect( deck.bottom() ).to.equal( 'f' );
       });
 
       it( 'returns an array of cards to the bottom of the deck in order', function() {
-        deck.discardToBottom([ 'f', 'g', 'h', 'i' ]);
+        deck.addToBottom([ 'f', 'g', 'h', 'i' ]);
         expect( deck.remaining() ).to.equal( 9 );
         expect( deck.bottom( 4 ) ).to.deep.equal([ 'i', 'h', 'g', 'f' ]);
       });
 
       it( 'is chainable', function() {
-        expect( deck.discardToBottom() ).to.equal( deck );
+        expect( deck.addToBottom() ).to.equal( deck );
       });
 
     });
@@ -399,30 +399,30 @@ describe( 'Deck', function() {
 
     });
 
-    describe( '.discardToTop()', function() {
+    describe( '.addToTop()', function() {
 
       it( 'exists', function() {
-        expect( deck ).to.have.property( 'discardToTop' );
+        expect( deck ).to.have.property( 'addToTop' );
       });
 
       it( 'is a function', function() {
-        expect( deck.discardToTop ).to.be.a( 'function' );
+        expect( deck.addToTop ).to.be.a( 'function' );
       });
 
       it( 'returns a card object to the top of the deck', function() {
-        deck.discardToTop( 'f' );
+        deck.addToTop( 'f' );
         expect( deck.remaining() ).to.equal( 6 );
         expect( deck.top( 6 ) ).to.deep.equal([ 'f', 'a', 'b', 'c', 'd', 'e' ]);
       });
 
       it( 'returns an array of cards to the top of the deck in order', function() {
-        deck.discardToTop([ 'f', 'g', 'h' ]);
+        deck.addToTop([ 'f', 'g', 'h' ]);
         expect( deck.remaining() ).to.equal( 8 );
         expect( deck.top( 8 ) ).to.deep.equal([ 'f', 'g', 'h', 'a', 'b', 'c', 'd', 'e' ]);
       });
 
       it( 'is chainable', function() {
-        expect( deck.discardToTop() ).to.equal( deck );
+        expect( deck.addToTop() ).to.equal( deck );
       });
 
     });
@@ -454,30 +454,30 @@ describe( 'Deck', function() {
 
     });
 
-    describe( '.discardRandom()', function() {
+    describe( '.addRandom()', function() {
 
       it( 'exists', function() {
-        expect( deck ).to.have.property( 'discardRandom' );
+        expect( deck ).to.have.property( 'addRandom' );
       });
 
       it( 'is a function', function() {
-        expect( deck.discardRandom ).to.be.a( 'function' );
+        expect( deck.addRandom ).to.be.a( 'function' );
       });
 
       it( 'returns a card object to a random location within the deck', function() {
-        deck.discardRandom( 'f' );
+        deck.addRandom( 'f' );
         expect( deck.remaining() ).to.equal( 6 );
         expect( deck.top( 6 ) ).to.deep.equal([ 'a', 'f', 'b', 'c', 'd', 'e' ]);
       });
 
       it( 'returns an array of cards to random locations within the deck', function() {
-        deck.discardRandom([ 'f', 'g', 'h' ]);
+        deck.addRandom([ 'f', 'g', 'h' ]);
         expect( deck.remaining() ).to.equal( 8 );
         expect( deck.top( 8 ) ).to.deep.equal([ 'a', 'g', 'f', 'b', 'c', 'h', 'd', 'e' ]);
       });
 
       it( 'is chainable', function() {
-        expect( deck.discardRandom() ).to.equal( deck );
+        expect( deck.addRandom() ).to.equal( deck );
       });
 
     });
@@ -617,6 +617,16 @@ describe( 'Deck', function() {
 
     });
 
+  });
+
+  it( 'can be augmented by providing additional prototype methods', function() {
+    deck = new Deck([ 'a', 'b', 'c' ]);
+    Deck.prototype.replace = function( cards ) {
+      return this.addToTop( cards );
+    };
+    deck.replace( 'd' );
+    expect( deck.remaining( 4 ) );
+    expect( deck.top( 4 ) ).to.deep.equal([ 'd', 'a', 'b', 'c' ]);
   });
 
 });
