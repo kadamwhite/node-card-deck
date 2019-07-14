@@ -9,8 +9,7 @@
   "main": "deck.js",
   "scripts": {
     "prepublish": "npm run lint && npm test",
-    "lint": "grunt jshint jscs",
-    "lint:watch": "grunt watch",
+    "lint": "eslint .",
     "test": "jest --coverage",
     "test:watch": "jest --watch"
   },
@@ -18,16 +17,6 @@
   "license": "MIT",
   "devDependencies": {
     "eslint": "^6.0.1",
-    "grunt": "^0.4.5",
-    "grunt-cli": "^0.1.13",
-    "grunt-contrib-jshint": "^2.1.0",
-    "grunt-contrib-watch": "^1.1.0",
-    "grunt-jscs": "^3.0.1",
-    "istanbul": "^0.4.5",
-    "jest": "^24.8.0",
-    "jscs-stylish": "^0.3.1",
-    "jshint-stylish": "^2.2.1",
-    "load-grunt-tasks": "^3.3.0",
-    "lodash.merge": "^4.6.2"
+    "jest": "^24.8.0"
   }
 }
