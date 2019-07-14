@@ -159,7 +159,7 @@ Deck.prototype.drawRandom = function( count ) {
 Deck.prototype.addToBottom = function( cards ) {
   if ( ! isArray( cards ) ) {
     // Handle individual card objects
-    return this.addToBottom([ cards ]);
+    return this.addToBottom( [ cards ] );
   }
   this._stack.push.apply( this._stack, cards );
   return this;
@@ -175,7 +175,7 @@ Deck.prototype.addToBottom = function( cards ) {
 Deck.prototype.shuffleToBottom = function( cards ) {
   if ( ! isArray( cards ) ) {
     // Handle individual card objects
-    return this.shuffleToBottom([ cards ]);
+    return this.shuffleToBottom( [ cards ] );
   }
   shuffle( cards );
   return this.addToBottom( cards );
@@ -191,7 +191,7 @@ Deck.prototype.shuffleToBottom = function( cards ) {
 Deck.prototype.addToTop = function( cards ) {
   if ( ! isArray( cards ) ) {
     // Handle individual card objects
-    return this.addToTop([ cards ]);
+    return this.addToTop( [ cards ] );
   }
   this._stack.unshift.apply( this._stack, cards );
   return this;
@@ -207,7 +207,7 @@ Deck.prototype.addToTop = function( cards ) {
 Deck.prototype.shuffleToTop = function( cards ) {
   if ( ! isArray( cards ) ) {
     // Handle individual card objects
-    return this.shuffleToTop([ cards ]);
+    return this.shuffleToTop( [ cards ] );
   }
   shuffle( cards );
   return this.addToTop( cards );
@@ -223,12 +223,12 @@ Deck.prototype.shuffleToTop = function( cards ) {
 Deck.prototype.addRandom = function( cards ) {
   if ( ! isArray( cards ) ) {
     // Handle individual card objects
-    return this.addRandom([ cards ]);
+    return this.addRandom( [ cards ] );
   }
   var stack = this._stack;
-  cards.forEach(function( card ) {
+  cards.forEach( function( card ) {
     stack.splice( randomIndex( stack ), 0, card );
-  });
+  } );
   return this;
 };
 

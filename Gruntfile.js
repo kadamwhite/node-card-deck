@@ -1,8 +1,9 @@
+'use strict';
+/* eslint-disable global-require */
+
 var merge = require( 'lodash.merge' );
 
 module.exports = function( grunt ) {
-  'use strict';
-
   // Reusable file globbing
   var files = {
     grunt: [ 'Gruntfile.js' ],
@@ -10,12 +11,12 @@ module.exports = function( grunt ) {
       'deck.js',
       'lib/**/*.js',
       // No tests
-      '!**/*.spec.js'
+      '!**/*.spec.js',
     ],
     tests: [
       'deck.spec.js',
-      'lib/**/*.spec.js'
-    ]
+      'lib/**/*.spec.js',
+    ],
   };
 
   // Reusable JSHintRC options
@@ -24,58 +25,58 @@ module.exports = function( grunt ) {
   // Load tasks.
   require( 'load-grunt-tasks' )( grunt );
 
-  grunt.initConfig({
+  grunt.initConfig( {
 
     pkg: grunt.file.readJSON( 'package.json' ),
 
     jscs: {
       options: {
         config: '.jscsrc',
-        reporter: require( 'jscs-stylish' ).path
+        reporter: require( 'jscs-stylish' ).path,
       },
       grunt: {
-        src: files.grunt
+        src: files.grunt,
       },
       js: {
-        src: files.js
+        src: files.js,
       },
       tests: {
-        src: files.tests
-      }
+        src: files.tests,
+      },
     },
 
     jshint: {
       options: {
-        reporter: require( 'jshint-stylish' )
+        reporter: require( 'jshint-stylish' ),
       },
       grunt: {
         options: jshintrc,
-        src: files.grunt
+        src: files.grunt,
       },
       js: {
         options: jshintrc,
-        src: files.js
+        src: files.js,
       },
       tests: {
-        options: merge({
-          mocha: true
+        options: merge( {
+          mocha: true,
         }, jshintrc ),
-        src: files.tests
-      }
+        src: files.tests,
+      },
     },
 
     watch: {
       js: {
         files: files.js,
-        tasks: [ 'jshint:js', 'jscs:js' ]
+        tasks: [ 'jshint:js', 'jscs:js' ],
       },
       tests: {
         files: files.tests,
-        tasks: [ 'jshint:tests', 'jscs:tests' ]
-      }
-    }
+        tasks: [ 'jshint:tests', 'jscs:tests' ],
+      },
+    },
 
-  });
+  } );
 
   grunt.registerTask( 'lint', [ 'jshint', 'jscs' ] );
   grunt.registerTask( 'default', [ 'lint' ] );
