@@ -3,13 +3,11 @@
  */
 'use strict';
 
-var randomNumber = require( './lib/random-number' );
-
 var isArray = require( './lib/is-array' );
 
 // Get a random integer index within the provided array
 function randomIndex( arr ) {
-  return Math.floor( randomNumber() * arr.length );
+  return Math.floor( Math.random() * arr.length );
 }
 
 // Predicate function to filter out undefined values
@@ -27,7 +25,7 @@ function shuffle( arr ) {
   // While there remain elements to shuffle…
   while ( remaining ) {
     // Pick a remaining element...
-    idx = Math.floor( randomNumber() * remaining-- );
+    idx = Math.floor( Math.random() * remaining-- );
 
     // And swap it with the current element.
     tmp = arr[ remaining ];
