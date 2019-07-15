@@ -1,6 +1,6 @@
 {
   "name": "card-deck",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A JavaScript implementation of a deck of cards with a simple, intuitive API",
   "repository": {
     "type": "git",
