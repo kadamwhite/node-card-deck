@@ -34,7 +34,7 @@ The cards will be initially inserted in the same order in which they occur in th
 ```js
 myDeck.shuffle();
 ```
-This will shuffle the cards using the [Fisher-Yates Shuffle](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle) algorithm. For more background on this technique, see [Mike Bostock's visual comparison of shuffle algorithms](http://bost.ocks.org/mike/shuffle/).
+This will shuffle the cards using the [Fisher-Yates Shuffle](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle) algorithm. For more background on this technique, see [Mike Bostock's visual comparison of shuffle algorithms](https://bost.ocks.org/mike/shuffle/).
 
 ### Inspect the Deck
 
@@ -111,7 +111,7 @@ myDeck.prototype.replace = function( cards ) {
 
 If you are interested in altering or adding code to `Deck`, here is how to work with the repository locally:
 
-1. Ensure you have [Node.js](https://nodejs.org/en/) installed on your system: on OSX, we recommend using [Homebrew](http://brew.sh/) to install Node.
+1. Ensure you have [Node.js](https://nodejs.org/en/) installed on your system: on OSX, we recommend using [Homebrew](https://brew.sh/) to install Node.
 2. [Clone this project](https://help.github.com/articles/cloning-a-repository/) to your computer
 3. On the command line, within the directory to which you cloned this project, run `npm install` to install the development dependencies. `Deck` has no run-time dependencies.
 
