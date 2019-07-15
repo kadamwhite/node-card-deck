@@ -77,3 +77,6 @@ atlassian-ide-plugin.xml
 com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
+
+# This is a dependency, not an app -- package lock should be unnecessary.
+package-lock.json
