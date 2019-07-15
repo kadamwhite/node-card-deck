@@ -1,5 +1,5 @@
 language: node_js
-script: "npm run test:ci"
+script: "npm run ci"
 node_js:
   - "node"
   - "lts/*"
